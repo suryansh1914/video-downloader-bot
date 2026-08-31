@@ -1,0 +1,29 @@
+# Render.com deployment config
+# This file tells Render how to build and run the bot.
+
+services:
+  - type: worker
+    name: video-downloader-bot
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: BOT_TOKEN
+        sync: false   # Set manually in Render dashboard
+      - key: MAX_DURATION_SECONDS
+        value: "600"
+      - key: MAX_FILE_SIZE_MB
+        value: "200"
+      - key: TELEGRAM_UPLOAD_LIMIT_MB
+        value: "50"
+      - key: MAX_CONCURRENT_JOBS
+        value: "2"
+      - key: RATE_LIMIT_PER_HOUR
+        value: "10"
+      - key: JOB_TIMEOUT_SECONDS
+        value: "300"
+      - key: LOG_LEVEL
+        value: "INFO"
+    disk:
+      name: bot-data
+      mountPath: /app/data
+      sizeGB: 1
