@@ -63,6 +63,12 @@ def _build_ydl_opts(job_dir: Path) -> dict:
         "merge_output_format": "mp4",
         # Extract thumbnail URL but don't download it
         "writethumbnail": False,
+        # Try to bypass YouTube bot blocks by acting as an Android client
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "web"]
+            }
+        },
     }
 
     # Add cookies file if it exists in the project root
