@@ -65,6 +65,13 @@ def _build_ydl_opts(job_dir: Path) -> dict:
         "writethumbnail": False,
     }
 
+    # Add cookies file if it exists in the project root
+    cookie_path = Path(__file__).parent / "cookies.txt"
+    if cookie_path.exists():
+        opts["cookiefile"] = str(cookie_path)
+        
+    return opts
+
 
 async def _extract_info(url: str, ydl_opts: dict) -> dict:
     """Run yt-dlp info extraction in a thread."""
