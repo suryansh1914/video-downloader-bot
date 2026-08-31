@@ -267,6 +267,26 @@ async def _download_pipeline(job: Job, context: ContextTypes.DEFAULT_TYPE) -> No
         cleanup_job_dir(job.job_dir)
 
 
+# ─── Dummy Web Server for Render ────────────────────────────────────────────
+
+from aiohttp import web
+
+async def _health_check(request):
+    """Simple health check endpoint for Render."""
+    return web.Response(text="Bot is running!")
+
+async def start_dummy_server():
+    """Starts a dummy aiohttp server on the PORT env variable."""
+    app = web.Application()
+    app.add_routes([web.get("/", _health_check)])
+    runner = web.AppRunner(app)
+    await runner.setup()
+    
+    port = config.PORT
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+    logger.info("🌐 Dummy web server running on port %d (for Render)", port)
+
 # ─── Main ───────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -288,6 +308,7 @@ def main() -> None:
     # Lifecycle
     async def on_startup(application: Application) -> None:
         await queue_mgr.start()
+        await start_dummy_server()
         logger.info("🤖 Bot started!")
 
     async def on_shutdown(application: Application) -> None:
